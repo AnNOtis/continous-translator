@@ -3,38 +3,47 @@ import axios from 'axios'
 import fs from 'fs'
 import path from 'path'
 import camb from './cambridge'
+import appleParsingResult from './__fixtures__/apple-parsing-result'
 
 const fixtureOfAs = fs.readFileSync(path.resolve(__dirname, './__fixtures__/apple-html.html')).toString()
 
 describe('test searching result of "apple"', () => {
-  beforeEach(() => {
+  let result
+  let expectation
+  beforeEach(async () => {
     axios.get = () => new Promise(resolve => {
       resolve({ data: fixtureOfAs })
     })
+    result = await camb.search('apple')
+    expectation = appleParsingResult
   })
 
   test('par of speach', async () => {
-    const result = await camb.search('apple')
-    expect(result.definitions[0]).toBe('noun')
+    compareProp(obj => obj.definitions[0].pos, result, expectation)
   })
 
   test('pronounciation', async () => {
-    const result = await camb.search('apple')
-    expect(result.definitions[0].pron).toBe({
-      us: {
-        audioSrc: 'https://dictionary.cambridge.org/media/english-chinese-traditional/us_pron/a/as_/as___/as.mp3',
-        ipa: 'ˈæp.əl'
-      }
-    })
+    compareProp(obj => obj.definitions[0].pron, result, expectation)
   })
 
   test('content', async () => {
-    const result = await camb.search('apple')
-    expect(result.definitions[0].content).toBe('a round fruit with firm, white flesh and a green, red, or yellow skin')
+    compareProp(obj => obj.definitions[0].content, result, expectation)
   })
 
   test('translation', async () => {
-    const result = await camb.search('apple')
-    expect(result.definitions[0].translation).toBe('蘋果')
+    compareProp(obj => obj.definitions[0].translation, result, expectation)
+  })
+
+  test('moreExamples', async () => {
+    compareProp(obj => obj.definitions[0].moreExamples, result, expectation)
   })
 })
+
+function compareProp (fn, receive, expected, log = false) {
+  if (log) {
+    console.log('receive', receive)
+    console.log('expected', expected)
+  }
+
+  expect(fn(receive)).toEqual(fn(expected))
+}

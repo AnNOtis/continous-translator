@@ -1,10 +1,10 @@
 export default {
   definitions: [
     {
-      partOfSpeech: 'noun',
+      pos: 'noun',
       pron: {
         us: {
-          audioSrc: 'https://dictionary.cambridge.org/media/english-chinese-traditional/us_pron/a/as_/as___/as.mp3',
+          audioSrc: 'https://dictionary.cambridge.org/media/english-chinese-traditional/us_pron/a/app/apple/apple.mp3',
           ipa: 'ˈæp.əl'
         }
       },
@@ -23,6 +23,13 @@ export default {
           content: 'an apple tree',
           translation: '蘋果樹'
         }
+      ],
+      moreExamples: [
+        'He was munching on an apple.',
+        'He took a bite out of the apple.',
+        'The apple tree at the bottom of the garden is beginning to blossom.',
+        'Newton reasoned that there must be a force such as gravity, when an apple fell on his head.',
+        'Do you have any cooking apples?'
       ]
     }
   ]

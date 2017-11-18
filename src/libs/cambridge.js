@@ -3,13 +3,15 @@ const axios = require('axios')
 const $ = require('cheerio')
 
 async function search (word) {
-  const resp = await axios.get('https://dictionary.cambridge.org/dictionary/english-chinese-traditional/apple')
+  const resp = await axios.get('https://dictionary.cambridge.org/dictionary/english-chinese-traditional/' + word)
 
-  return { definitions: definitions($.load(resp.data, { ignoreWhitespace: true })) }
+  const defElem = $.load(resp.data)('.entry-body')
+
+  return defElem.length > 0 ? { definitions: definitions(defElem) } : null
 }
 
-function definitions ($) {
-  return $('.entry-body__el').map((_, elem) => definition($(elem)))
+function definitions (elem) {
+  return $(elem).map((_, elem) => definition($(elem)))
 }
 
 function definition (elem) {

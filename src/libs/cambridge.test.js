@@ -7,7 +7,7 @@ import appleParsingResult from './__fixtures__/apple-parsing-result'
 
 const fixtureOfAs = fs.readFileSync(path.resolve(__dirname, './__fixtures__/apple-html.html')).toString()
 
-describe('test searching result of "apple"', () => {
+describe('search("apple")', () => {
   let result
   let expectation
   beforeEach(async () => {
@@ -36,6 +36,19 @@ describe('test searching result of "apple"', () => {
 
   test('moreExamples', async () => {
     compareProp(obj => obj.definitions[0].moreExamples, result, expectation)
+  })
+})
+
+describe('search("unknown wordddddd")', () => {
+  it('returns null', async () => {
+    const fixtureOfNoResult = fs.readFileSync(path.resolve(__dirname, './__fixtures__/no-result.html')).toString()
+
+    axios.get = () => new Promise(resolve => {
+      resolve({ data: fixtureOfNoResult })
+    })
+
+    const result = await camb.search('unknown wordddddd')
+    expect(result).toBeNull()
   })
 })
 

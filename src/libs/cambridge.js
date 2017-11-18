@@ -3,6 +3,8 @@ const axios = require('axios')
 const $ = require('cheerio')
 
 async function search (word) {
+  if (!word) return null
+
   const resp = await axios.get('https://dictionary.cambridge.org/dictionary/english-chinese-traditional/' + word)
 
   const defElem = $.load(resp.data)('.entry-body')

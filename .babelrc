@@ -1,3 +1,13 @@
 {
-  "presets": ["env", "react"]
+  "presets": [[
+    "env",
+    {
+      "targets": {
+        "electron": "1.7.9"
+      },
+      "useBuiltIns": "entry"
+    }
+  ]
+  , "react"],
+  "plugins": ["transform-object-rest-spread"]
 }

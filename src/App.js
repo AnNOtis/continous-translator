@@ -1,9 +1,9 @@
 import React from 'react'
-import Editor from './Editor'
+import Dictionary from './Dictionary'
 
 const App = () => (
   <div>
-    <Editor />
+    <Dictionary />
   </div>
 )
 

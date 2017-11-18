@@ -31,6 +31,7 @@
   "dependencies": {
     "draft-js": "^0.10.4",
     "lodash": "^4.17.4",
+    "p-memoize": "^1.0.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0"
   }

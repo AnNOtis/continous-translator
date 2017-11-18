@@ -21,28 +21,28 @@ class CustomEditor extends React.Component {
     super(props)
 
     this.state = {editorState: EditorState.createEmpty()}
-    this.handleWordChange = debouce(() => {
-      this.props.onWordChange(this.getWord(this.state.editorState))
-    }, 500)
 
-    this.onChange = (editorState) => {
-      this.setState({
-        editorState
-      }, this.handleWordChange)
-    }
+    this.handleChange = this.handleChange.bind(this)
+    this.processContentChange = this.processContentChange.bind(this)
+    this.debouncedProcessContentChange = debouce(
+      this.processContentChange,
+      500
+    )
   }
 
-  getWord (editorState) {
-    const selectionState = editorState.getSelection()
+  handleChange (editorState) {
+    this.setState({
+      editorState
+    }, this.debouncedProcessContentChange)
+  }
 
-    const anchorKey = selectionState.getAnchorKey()
-    const currentContent = editorState.getCurrentContent()
-    const currentContentBlock = currentContent.getBlockForKey(anchorKey)
+  processContentChange () {
+    const words = this.state.editorState.getCurrentContent()
+      .getBlockMap()
+      .toArray()
+      .map(block => block.getText())
 
-    return {
-      content: currentContentBlock.getText(),
-      lineNumber: currentContent.getBlockMap().toArray().findIndex(block => anchorKey === block.key)
-    }
+    this.props.onWordsChange(words)
   }
 
   render () {
@@ -51,7 +51,7 @@ class CustomEditor extends React.Component {
         <Editor
           style={EDITOR_STYLE}
           editorState={this.state.editorState}
-          onChange={this.onChange}
+          onChange={this.handleChange}
           ref={(input) => { this.textInput = input }} />
         />
       </Wrapper>

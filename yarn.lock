@@ -3169,6 +3169,13 @@ p-locate@^2.0.0:
   dependencies:
     p-limit "^1.1.0"
 
+p-memoize@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/p-memoize/-/p-memoize-1.0.0.tgz#5760138734a553d1b103e4c176cf8866faa5f26e"
+  dependencies:
+    mem "^1.1.0"
+    mimic-fn "^1.0.0"
+
 parse-glob@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/parse-glob/-/parse-glob-3.0.4.tgz#b2c376cfb11f35513badd173ef0bb6e3a388391c"

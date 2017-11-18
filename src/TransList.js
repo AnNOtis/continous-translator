@@ -4,20 +4,13 @@ class TransList extends React.Component {
   render () {
     return (
       <ul>
-        {this.props.words.map(word => {
-          if (!word) return <li key={word.lineNumber} />
+        {this.props.words.map((word, index) => {
+          if (!word) return <li key={index} />
 
-          switch (word.status) {
-            case 'SEARCHED':
-              if (word.definitions) {
-                return <li key={word.lineNumber}>{word.definitions[0].translation}</li>
-              } else {
-                return <li key={word.lineNumber}>not a word</li>
-              }
-            case 'SEARCHING':
-              return <li key={word.lineNumber}>searching...</li>
-            default:
-              return <li key={word.lineNumber}>no</li>
+          if (word.definitions) {
+            return <li key={index}>{word.definitions[0].translation}</li>
+          } else {
+            return <li key={index}>No result</li>
           }
         })}
       </ul>

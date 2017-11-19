@@ -4,10 +4,13 @@ import styled from 'styled-components'
 import debouce from 'lodash/debounce'
 
 const Wrapper = styled.div`
-  font-size: 14px;
   border: 1px solid #333;
   width: 300px;
   height: 500px;
+  font-size: 14px;
+  line-height: 18px;
+  margin: 0;
+  padding: 0;
 `
 
 const EDITOR_STYLE = {
@@ -23,9 +26,9 @@ class CustomEditor extends React.Component {
     this.state = {editorState: EditorState.createEmpty()}
 
     this.handleChange = this.handleChange.bind(this)
-    this.processContentChange = this.processContentChange.bind(this)
+    this.handleContentChange = this.handleContentChange.bind(this)
     this.debouncedProcessContentChange = debouce(
-      this.processContentChange,
+      this.handleContentChange,
       500
     )
   }
@@ -36,13 +39,16 @@ class CustomEditor extends React.Component {
     }, this.debouncedProcessContentChange)
   }
 
-  processContentChange () {
-    const words = this.state.editorState.getCurrentContent()
+  handleContentChange () {
+    const anchorKey = this.state.editorState.getSelection().getAnchorKey()
+    const blocks = this.state.editorState.getCurrentContent()
       .getBlockMap()
       .toArray()
-      .map(block => block.getText())
 
-    this.props.onWordsChange(words)
+    const currentLine = blocks.findIndex(block => anchorKey === block.key)
+    const words = blocks.map(block => block.getText())
+
+    this.props.onWordsChange({ words, currentLine: currentLine })
   }
 
   render () {

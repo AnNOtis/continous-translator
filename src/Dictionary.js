@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import pMemoize from 'p-memoize'
+import { Howl } from 'howler'
 
 import TransList from './TransList'
 import Editor from './Editor'
@@ -12,6 +13,7 @@ const Wrapper = styled.div`
 `
 
 const cacheableSearch = pMemoize(camb.search)
+const cachedHowlInstance = {}
 
 export const LOADING = 'LOADING'
 export const REFRESHING = 'REFRESHING'
@@ -28,7 +30,7 @@ class Dictionary extends React.Component {
     this.searchWord = this.searchWord.bind(this)
   }
 
-  searchWords (words) {
+  searchWords ({ words, currentLine }) {
     words.forEach((word, index) => {
       let status
       if (!words[index]) {
@@ -42,11 +44,11 @@ class Dictionary extends React.Component {
           content: word,
           status
         })
-      }, () => this.searchWord(word, index))
+      }, () => this.searchWord(word, index, { pronounce: index === currentLine }))
     })
   }
 
-  searchWord (word, index) {
+  searchWord (word, index, { pronounce = false }) {
     cacheableSearch(word).then((searchResult) => {
       this.setState({
         words: array.replace(this.state.words, index,
@@ -56,6 +58,16 @@ class Dictionary extends React.Component {
             status: LOADED
           }
         )
+      }, () => {
+        if (searchResult && pronounce) {
+          const audioSource = searchResult.definitions[0].pron.us.audioSrc
+          if (!cachedHowlInstance[audioSource]) {
+            const sound = new Howl({ src: [ audioSource ] })
+            cachedHowlInstance[audioSource] = sound
+          }
+
+          cachedHowlInstance[audioSource].play()
+        }
       })
     })
   }

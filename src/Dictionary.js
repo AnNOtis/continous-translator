@@ -13,6 +13,10 @@ const Wrapper = styled.div`
 
 const cacheableSearch = pMemoize(camb.search)
 
+export const LOADING = 'LOADING'
+export const REFRESHING = 'REFRESHING'
+export const LOADED = 'LOADED'
+
 class Dictionary extends React.Component {
   constructor (props) {
     super(props)
@@ -21,12 +25,37 @@ class Dictionary extends React.Component {
     }
 
     this.searchWords = this.searchWords.bind(this)
+    this.searchWord = this.searchWord.bind(this)
   }
 
   searchWords (words) {
     words.forEach((word, index) => {
-      cacheableSearch(word).then((searchResult) => {
-        this.setState({ words: array.replace(this.state.words, index, searchResult) })
+      let status
+      if (!words[index]) {
+        status = LOADING
+      } else if (words[index].content !== word) {
+        status = REFRESHING
+      }
+
+      this.setState({
+        words: array.replace(this.state.words, index, {
+          content: word,
+          status
+        })
+      }, () => this.searchWord(word, index))
+    })
+  }
+
+  searchWord (word, index) {
+    cacheableSearch(word).then((searchResult) => {
+      this.setState({
+        words: array.replace(this.state.words, index,
+          {
+            ...this.state.words[index],
+            ...searchResult,
+            status: LOADED
+          }
+        )
       })
     })
   }

@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import { insert, replace } from './array'
+import { insert, replace } from '../array'
 
 describe('array.*', () => {
   describe('array.insert()', () => {

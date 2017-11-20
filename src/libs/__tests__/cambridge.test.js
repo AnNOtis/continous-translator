@@ -2,10 +2,10 @@
 import axios from 'axios'
 import fs from 'fs'
 import path from 'path'
-import camb from './cambridge'
-import appleParsingResult from './__fixtures__/apple-parsing-result'
+import camb from '../cambridge'
+import appleParsingResult from '../__fixtures__/apple-parsing-result'
 
-const fixtureOfAs = fs.readFileSync(path.resolve(__dirname, './__fixtures__/apple-html.html')).toString()
+const fixtureOfAs = fs.readFileSync(path.resolve(__dirname, '../__fixtures__/apple-html.html')).toString()
 
 describe('search("apple")', () => {
   let result
@@ -41,7 +41,7 @@ describe('search("apple")', () => {
 
 describe('search("unknown wordddddd")', () => {
   it('returns null', async () => {
-    const fixtureOfNoResult = fs.readFileSync(path.resolve(__dirname, './__fixtures__/no-result.html')).toString()
+    const fixtureOfNoResult = fs.readFileSync(path.resolve(__dirname, '../__fixtures__/no-result.html')).toString()
 
     axios.get = () => new Promise(resolve => {
       resolve({ data: fixtureOfNoResult })

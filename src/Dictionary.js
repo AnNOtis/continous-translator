@@ -5,6 +5,7 @@ import { Howl } from 'howler'
 
 import TransList from './TransList'
 import Editor from './Editor'
+import Definitions from './Definitions'
 import camb from './libs/cambridge'
 import * as array from './libs/array'
 
@@ -43,7 +44,8 @@ class Dictionary extends React.Component {
         words: array.replace(this.state.words, index, {
           content: word,
           status
-        })
+        }),
+        currentLine
       }, () => this.searchWord(word, index, { pronounce: index === currentLine }))
     })
   }
@@ -60,7 +62,7 @@ class Dictionary extends React.Component {
         )
       }, () => {
         if (searchResult && pronounce) {
-          const audioSource = searchResult.definitions[0].pron.us.audioSrc
+          const audioSource = searchResult.collections[0].pron.us.audioSrc
           if (!cachedHowlInstance[audioSource]) {
             const sound = new Howl({ src: [ audioSource ] })
             cachedHowlInstance[audioSource] = sound
@@ -77,6 +79,7 @@ class Dictionary extends React.Component {
       <Wrapper>
         <Editor onWordsChange={this.searchWords} />
         <TransList words={this.state.words} />
+        <Definitions word={this.state.words[this.state.currentLine]} />
       </Wrapper>
     )
   }

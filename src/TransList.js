@@ -19,11 +19,11 @@ class TransList extends React.Component {
       <List>
         {this.props.words.map((word, index) => {
           if (!word || !word.content) return <Item key={index} />
+
           if (word.status === LOADING || word.status === REFRESHING) {
             return <Item key={index}>loading...</Item>
-          }
-          if (word.definitions) {
-            return <Item key={index}>{word.definitions[0].translation}</Item>
+          } else if (word.collections && word.collections[0].definitions) {
+            return <Item key={index}>{word.collections[0].definitions[0].translation}</Item>
           } else {
             return <Item key={index} />
           }

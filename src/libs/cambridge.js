@@ -7,28 +7,23 @@ async function search (word) {
 
   const resp = await axios.get('https://dictionary.cambridge.org/dictionary/english-chinese-traditional/' + word)
 
-  const defElem = $.load(resp.data)('.entry-body')
+  const defElem = $.load(resp.data)('#entryContent')
 
-  return defElem.length > 0 ? { definitions: definitions(defElem) } : null
+  return defElem.length > 0 ? { collections: collections(defElem) } : null
 }
 
-function definitions (elem) {
-  return $(elem).map((_, elem) => definition($(elem)))
-}
-
-function definition (elem) {
-  return {
-    pos: pos(elem),
-    pron: pronounciation(elem),
-    content: content(elem),
-    translation: translation(elem),
-    examples: examples(elem),
-    moreExamples: moreExamples(elem)
-  }
+function collections (elem) {
+  return $(elem).find('.entry-body__el.clrd')
+    .map((_, elem) => ({
+      pos: pos($(elem)),
+      pron: pronounciation($(elem)),
+      definitions: definitions($(elem))
+    }))
+    .toArray()
 }
 
 function pos (elem) {
-  return $(elem).find('.pos-header .pos').text()
+  return $(elem).find('.di-title .pos').text()
 }
 
 function pronounciation (elem) {
@@ -42,6 +37,34 @@ function pronounciation (elem) {
   }
 }
 
+function definitions (elem) {
+  return $(elem).find('.sense-block')
+    .map((_, el) => definition($(el)))
+    .toArray()
+    .filter(definition => !!definition)
+}
+
+function definition (elem) {
+  /**
+   * One definition may contain multiple contents and translations, only one will be picked.
+   */
+  const el = $(elem).find('.def-block').first()
+  const phraseBlocks = $(elem).find('.phrase-block .def-block')
+  const phraseBlockIds = phraseBlocks.map((_, el) => $(el).attr('data-wl-senseid')).toArray()
+
+  // if this definition only has phrase definition, ignore it
+  if (phraseBlockIds.indexOf(el.attr('data-wl-senseid')) >= 0) {
+    return null
+  }
+
+  return {
+    content: content(el),
+    translation: translation(el),
+    examples: examples(el) || [],
+    moreExamples: moreExamples(elem) || []
+  }
+}
+
 function content (elem) {
   return $(elem).find('.def').text()
 }
@@ -51,7 +74,7 @@ function translation (elem) {
 }
 
 function examples (elem) {
-  return $(elem).find('.examp').map((_, elem) => example(elem))
+  return $(elem).find('.examp').map((_, elem) => example(elem)).toArray()
 }
 
 function example (elem) {
